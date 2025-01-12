@@ -1,0 +1,31 @@
+<html>
+
+<head>
+   <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="header">university navigation map</div>
+
+    <div id="placeModal">
+        <h1>University of Mumbai Navigation</h1>
+        <p>Enter where you are:</p>
+        <input name="start_point" type="search" placeholder="Search starting point">
+        <select name="start">
+            <option value="current location" onchange="askUserLocation()">Current Location</option>
+        </select>
+        <p>Where do you want to reach?</p>
+        <input type="search" name="end_point" placeholder="Search destination">
+        <select name="end">
+            <option value="choose destination">Choose Destination</option>
+        </select>
+        <button id="map_direction">Get Directions</button>
+    </div>
+
+    <div class="container">
+        <canvas id="myCanvas"></canvas>
+    </div>
+<script src="map.js"></script>
+</body>
+
+</html>
