@@ -1,6 +1,5 @@
-
-
-	let start_pos = 0,end_pos=0;
+let start_pos = 0,end_pos=0;
+let zoomLevel = 1;
         const canvas = document.getElementById('myCanvas');
         const context = canvas.getContext('2d');
 
@@ -19,14 +18,16 @@
 	}
 	else
 	{
-        canvasHeight = 990;
-        canvasWidth = 990;
+	//for width screen having width less than 800px
+	canvasHeight = visualViewport.height;
+	canvasWidth = visualViewport.width;		
+    	zoomLevel=2;
 	}
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
 
         // Zoom level and offsets
-        let zoomLevel = 1;
+      
         let offsetX = 0;
         let offsetY = 0;
 
@@ -36,9 +37,18 @@
 
         // Utility function to map lat/lng to canvas coordinates
         function latLngToCanvas(lat, lng) {
-            const y = ((maxLat - lat) / (maxLat - minLat)) * parseFloat(canvasHeight) * zoomLevel + offsetY;
-            const x = ((lng - minLng) / (maxLng - minLng)) * parseFloat(canvasWidth) * zoomLevel + offsetX;
-
+           // const y = ((maxLat - lat) / (maxLat - minLat)) * parseFloat(canvasHeight) * zoomLevel + offsetY;
+           // const x = ((lng - minLng) / (maxLng - minLng)) * parseFloat(canvasWidth) * zoomLevel + offsetX;
+let y,x;
+            if(screen.width > 800){
+            y = ((maxLat - lat) / (maxLat - minLat)) * parseFloat(canvasHeight)*zoomLevel + offsetY;
+            x = ((lng - minLng) / (maxLng - minLng)) * parseFloat(canvasWidth)*zoomLevel + offsetX;
+            }
+            else
+            {
+                y = ((maxLat - lat) / (maxLat - minLat)) * parseFloat(canvasHeight) + offsetY;
+            x = ((lng - minLng) / (maxLng - minLng)) * parseFloat(canvasWidth) + offsetX;
+            }
             return [x, y];
         }
 
@@ -140,9 +150,8 @@
 			alert("please select place from selection box ");
 			return;}
 			
-			let [lat1, lng1] = start.value.split(",");
+	    let [lat1, lng1] = start.value.split(",");
             let [lat2, lng2] = end.value.split(",");
-            //console.log(lat1, lng1, lat2, lng2);
 
 			
 
@@ -161,42 +170,6 @@
                 alert('Please select both start and end locations.');
             }
         });
-
-	
-
-        //ask user's location
-        function askUserLocationOnce() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                    },
-                    (error) => {
-                        console.error(`Error: ${error.message}`);
-                    }
-                );
-            }
-            else {
-                console.log("does not support navigation");
-            }
-        }
-		
-		//function which takes user's location during map direction command
-		//fetches user's live geo position each times
-
-		function clearCircle(x, y, radius) {
-            context.save(); // Save the current state
-            context.beginPath();
-            context.arc(x, y, radius, 0, Math.PI * 2, false);
-            context.clip(); // Clip to the circular region
-            context.clearRect(x - radius, y - radius, radius * 2, radius * 2); // Clear the rectangle enclosing the circle
-            context.restore(); // Restore the original state
-        }
-
-        // Example: Clear a circle at (200, 200) with radius 50
-       // clearCircle(200, 200, 50);
 
 	function ShowSE_direction()
 	{
@@ -221,15 +194,9 @@
 			let latitude = position.coords.latitude;
 			let longitude = position.coords.longitude;
 			let accuracy = position.coords.accuracy;
-			
-					
-					
-					
 					latitude = latitude.toFixed(5);
 					longitude = longitude.toFixed(5);
 					[x, y] = latLngToCanvas(latitude, longitude);
-					
-					
 					console.log("user's geolocation ",latitude, longitude);
 					console.log("user's position",x,y);
 					context.fillStyle = 'green';
@@ -237,7 +204,7 @@
                     let radius = 10;
                     context.arc(x, y, radius, 0, Math.PI * 2);  // Increased marker size
                     context.fill();
-					count++;
+		    count++;
 					
 			},
 			(error) =>{
@@ -262,11 +229,7 @@
             timeout: 50000            // Timeout after 5 seconds
 			}
 		);
-		/*
-		setTimeout(() => {
-        navigator.geolocation.clearWatch(watchId);
-        console.log('Stopped watching position.');
-    }, 60000); // Stop after 60 seconds */
+		
 } 
 
 else {
@@ -313,10 +276,6 @@ else {
             [19.06974, 72.85937],
             [19.07111, 72.85927], [19.07118, 72.85937],
             [19.07196, 72.86005], [19.07274, 72.86001], [19.07283, 72.86083]
-                /*
-                [19.07116,72.85834],
-                [19.07196,72.86005],[19.07274,72.86001],
-                [19.07283, 72.86083]*/
             ],
 
             "east_gate_ambedkar_bhavan": [[19.07283, 72.86083], [19.07271, 72.85837], [19.07303, 72.85802],
@@ -328,7 +287,6 @@ else {
             ],
 
             "dnyaneshwar_bhavan_csmt": [[19.07224, 72.85803], [19.07271, 72.85837]],
-            /*"lokmany_tilak_bhavan_dnyaneshwar_bhavan" : [[19.07208,72.85813],[19.07201,72.85823]],*/
 
             "old_jawaharlal_library_NLC_deskmush_bhavan_cirlce":
                 [[19.07186, 72.85668],
@@ -342,19 +300,15 @@ else {
 
             "jnl_to_csmt_road_toward_ambedkar": [[19.07186, 72.85668], [19.07255, 72.85587], [19.07273, 72.85563]],
 
-            /*"new_lecture_complex_old_jawaharlal_library_NLC_deskmush_bhavan_cirlce":[[19.07198,72.85731],[19.07210,72.85718]],
-            */
 
             "east_side_road_LTB": [[19.07187, 72.85799], [19.07160, 72.85828]],
             "marathi_bhasa_bhavan_to_road_going_toward_buddha": [[19.07066, 72.85811], [19.07078, 72.85796]],
 
             "biophysics_to_road_going_toward_buddha_circle": [[19.07013, 72.85710], [19.06994, 72.85746]],
-            //19.06983,72.85657
+ 
             "CBS_to_road_connecting_ambedkar_phule": [[19.06766, 72.85440], [19.06959, 72.85627], [19.06983, 72.85656]],
-            //[19.06999, 72.85635]
+
             "road_around_nanotechnology": [[19.06889, 72.85557], [19.06953, 72.85480], [19.06893, 72.85420], [19.06825, 72.85497]],
-
-
         };
 
 
@@ -485,61 +439,18 @@ else {
                 drawRoads();
             }
         });
+document.getElementById("PMvisible").addEventListener('mouseover',function(){
+console.log("mouseover");
+this.style.display='none';
+document.getElementById("placeModal").style.display='flex';
+});
 
-        let initialDistance = 0;
-function getDistance(touches){
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx*dx + dy*dy);
-}
+document.querySelector("#placeModal span").addEventListener('click',function(){
+this.parentNode.style.display='none';
+document.getElementById("PMvisible").style.display='block';
+});
 
-        // Handle touch events for mobile devices
-       canvas.addEventListener('touchstart', (event) => {
-           if(event.touches == 1){ const touch = event.touches[0];
-            isDragging = true;
-            startX = touch.clientX - offsetX;
-            startY = touch.clientY - offsetY;
-            canvas.style.cursor = 'grabbing';
-           }
-            console.log('working touchstart');
-            if(event.touches.length === 2 )
-            initialDistance = getDistance(event.touches);
-        });
 
-        canvas.addEventListener('touchend', () => {
-            isDragging = false;
-            canvas.style.cursor = 'grab';
-            console.log('working touchend'); 
-            if(e.touches.length < 2){
-                initialDistance = 0;
-            }
-        });
-
-        canvas.addEventListener('touchmove', (event) => {
-           /* if (isDragging) {
-                const touch = event.touches[0];
-                offsetX = touch.clientX - startX;
-                offsetY = touch.clientY - startY;
-                
-            }*/ 
-            console.log('working touchmove');
-            if (e.touches.length === 2) {
-                e.preventDefault(); // Prevent default touch behavior
-                const currentDistance = getDistance(e.touches);
-                if (initialDistance > 0) {
-                    const zoomFactor = currentDistance / initialDistance;
-                    zoomLevel = Math.max(0.5, Math.min(scale * zoomFactor, 2)); // Limit scale between 0.5 and 3
-                    initialDistance = currentDistance;
-                    draw(zoomLevel);
-                }
-            }
-        });
-
-     /*   window.addEventListener('resize', () => {
-            location.reload();
-        });
-*/
         // Initial drawing
-
 	drawMap(zoomLevel);
         drawRoads();
