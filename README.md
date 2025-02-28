@@ -1,2 +1,2 @@
 # UOM-webapp
-a webpage for navigation within mumbai university
+a webpage for navigation within mumbai university, maharashtra, india
